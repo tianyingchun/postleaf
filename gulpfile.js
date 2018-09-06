@@ -129,77 +129,75 @@ function buildStyles(source, target) {
       console.log(Chalk.green('✔︎ Styles at ' + new Date()));
     });
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Build tasks
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Build fonts
-Gulp.task('build:fonts', 'Build font assets.', ['clean:fonts'], () => {
-  buildFonts(fonts.source, fonts.target, fonts.base);
-});
-
-// Build images
-Gulp.task('build:images', 'Optimize images.', ['clean:images'], () => {
-  buildImages(images.source, images.target);
-});
-
-// Build scripts
-Gulp.task('build:scripts', 'Build scripts.', ['clean:scripts'], () => {
-  buildScripts(scripts.source, scripts.target);
-});
-
-// Build styles
-Gulp.task('build:styles', 'Build styles.', ['clean:styles'], () => {
-  buildStyles(styles.source, styles.target);
-});
-
-// Build all
-Gulp.task('build', 'Run all build tasks.', [
-  'build:fonts',
-  'build:images',
-  'build:scripts',
-  'build:styles'
-]);
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Clean tasks
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Clean fonts
-Gulp.task('clean:fonts', 'Delete generated fonts.', () => {
+Gulp.task('clean:fonts', () => {
   return Del(fonts.target);
 });
 
 // Clean images
-Gulp.task('clean:images', 'Delete generated images.', () => {
+Gulp.task('clean:images', () => {
   return Del(images.target);
 });
 
 // Clean scripts
-Gulp.task('clean:scripts', 'Delete generated scripts.', () => {
+Gulp.task('clean:scripts', () => {
   return Del(scripts.target);
 });
 
 // Clean styles
-Gulp.task('clean:styles', 'Delete generated styles.', () => {
+Gulp.task('clean:styles', () => {
   return Del(styles.target);
 });
 
 // Clean all
-Gulp.task('clean', 'Delete all generated files.', [
+Gulp.task('clean', Gulp.parallel(
   'clean:fonts',
   'clean:images',
   'clean:scripts',
   'clean:styles'
-]);
+));
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Build tasks
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Build fonts
+Gulp.task('build:fonts', Gulp.series('clean:fonts', () => {
+  buildFonts(fonts.source, fonts.target, fonts.base);
+}));
+
+// Build images
+Gulp.task('build:images', Gulp.series('clean:images', () => {
+  buildImages(images.source, images.target);
+}));
+
+// Build scripts
+Gulp.task('build:scripts', Gulp.series('clean:scripts', () => {
+  buildScripts(scripts.source, scripts.target);
+}));
+
+// Build styles
+Gulp.task('build:styles', Gulp.series('clean:styles', () => {
+  buildStyles(styles.source, styles.target);
+}));
+
+// Build all
+Gulp.task('build', Gulp.parallel(
+  'build:fonts',
+  'build:images',
+  'build:scripts',
+  'build:styles'
+));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other tasks
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Watch for changes
-Gulp.task('watch', 'Watch files and automatically build assets on change.', () => {
+Gulp.task('watch', () => {
   // Watch fonts
   Gulp.src(fonts.source)
     .pipe(Watch(fonts.source))
@@ -241,6 +239,3 @@ Gulp.task('watch', 'Watch files and automatically build assets on change.', () =
       buildStyles(styles.source, styles.target);
     });
 });
-
-// Default
-Gulp.task('default', 'Run the default task.', ['help']);
