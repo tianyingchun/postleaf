@@ -689,10 +689,16 @@ module.exports = {
         // Render the post
         if(req.query.isZenMode === 'true') {
           // Use zen mode template
-          previewRes.render('zen_mode', viewData, (err, html) => res.end(html));
+          previewRes.render('zen_mode', viewData, (err, html) => {
+            res.set('Content-Type', 'text/html');
+            res.end(html);
+          });
         } else {
           // Use post template
-          previewRes.render(template, viewData, (err, html) => res.end(html));
+          previewRes.render(template, viewData, (err, html) => {
+            res.set('Content-Type', 'text/html');
+            res.send(html);
+          });
         }
       })
       .catch((err) => next(err));

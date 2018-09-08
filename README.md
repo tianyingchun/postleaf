@@ -74,6 +74,7 @@ Postleaf is maintained under the [Semantic Versioning guidelines](http://semver.
 
 *“The starting point of all achievement is desire.” — Napoleon Hill*
 
+> brew install python
 > npm install -g node-sass
 > npm install -g node-gpy
 > npm install -g node-pre-gpy
