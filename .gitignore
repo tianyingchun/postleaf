@@ -10,3 +10,4 @@ design/
 node_modules/
 themes/
 uploads/
+package-lock.json

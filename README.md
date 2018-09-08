@@ -77,6 +77,6 @@ Postleaf is maintained under the [Semantic Versioning guidelines](http://semver.
 > npm install -g node-sass
 > npm install -g node-gpy
 > npm install -g node-pre-gpy
+> npm install -g sqlite3
 > npm install gulp-cli -g
-> npm install "gulpjs/gulp#5.0" --save-dev
-> npm install --build-from-source --sqlite=/usr/local/opt/sqlite/
+> npm install "gulpjs/gulp#4.0" --save-dev

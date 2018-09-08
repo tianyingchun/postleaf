@@ -1,7 +1,7 @@
 /* eslint-env es6, node */
 'use strict';
 
-const Gulp = require('gulp-help')(require('gulp'));
+const Gulp = require('gulp');
 const Autoprefixer = require('gulp-autoprefixer');
 const Babel = require('gulp-babel');
 const Browserify = require('gulp-browserify');
@@ -166,22 +166,22 @@ Gulp.task('clean', Gulp.parallel(
 
 // Build fonts
 Gulp.task('build:fonts', Gulp.series('clean:fonts', () => {
-  buildFonts(fonts.source, fonts.target, fonts.base);
+  return buildFonts(fonts.source, fonts.target, fonts.base);
 }));
 
 // Build images
 Gulp.task('build:images', Gulp.series('clean:images', () => {
-  buildImages(images.source, images.target);
+  return buildImages(images.source, images.target);
 }));
 
 // Build scripts
 Gulp.task('build:scripts', Gulp.series('clean:scripts', () => {
-  buildScripts(scripts.source, scripts.target);
+  return buildScripts(scripts.source, scripts.target);
 }));
 
 // Build styles
 Gulp.task('build:styles', Gulp.series('clean:styles', () => {
-  buildStyles(styles.source, styles.target);
+  return buildStyles(styles.source, styles.target);
 }));
 
 // Build all
