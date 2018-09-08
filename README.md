@@ -80,3 +80,6 @@ Postleaf is maintained under the [Semantic Versioning guidelines](http://semver.
 > npm install -g sqlite3
 > npm install gulp-cli -g
 > npm install "gulpjs/gulp#4.0" --save-dev
+> mkdir themes
+> git clone https://github.com/Postleaf/empower-theme.git
+> git clone https://github.com/Postleaf/casper2-theme.git
