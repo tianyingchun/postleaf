@@ -1,12 +1,12 @@
 module.exports = {
   apps: [
     {
-      name: 'post-leaf',
+      name: 'postleaf',
       script: './app.js',
       watch: false,
       env: {
         PORT: 3000,
-        NODE_ENV: 'development'
+        NODE_ENV: 'production'
       }
     }
   ]
