@@ -17,8 +17,12 @@ $(() => {
 
     // Hide it
     $('html').removeClass('has-modal');
-    $('#locater, #locater-overlay').animateCSS('fadeOut', 100, function() {
-      $(this).prop('hidden', true);
+    $('#locater, #locater-overlay').animateCSS('fadeOut',{
+      delay: 0,
+      duration: 100,
+      complete: function() {
+        $(this).prop('hidden', true);
+      }
     });
   }
 
@@ -92,9 +96,13 @@ $(() => {
     $('#locater, #locater-overlay')
       .prop('hidden', false)
       .css('opacity', 0)
-      .animateCSS('fadeIn', 100, function() {
-        $(this).css('opacity', 1);
-        $('#locater-input').focus();
+      .animateCSS('fadeIn',{
+        delay: 0,
+        duration: 100,
+        complete: function() {
+          $(this).css('opacity', 1);
+          $('#locater-input').focus();
+        }
       });
 
     // Watch for key presses
