@@ -10,9 +10,9 @@
     "start": "node app.js"
   },
   "devDependencies": {
-    "@claviska/jquery-ajax-submit": "2.0.4",
+    "@claviska/jquery-ajax-submit": "2.1.0",
     "@claviska/jquery-alertable": "1.0.2",
-    "@claviska/jquery-animate-css": "1.0.0",
+    "@claviska/jquery-animate-css": "1.0.3",
     "@claviska/jquery-announce": "1.0.0",
     "@claviska/jquery-offscreen": "1.0.1",
     "@claviska/jquery-selectable": "1.0.6",
