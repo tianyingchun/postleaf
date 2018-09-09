@@ -795,7 +795,7 @@ $(() => {
 
   // Listen for fullscreen changes
   if(Screenfull.enabled) {
-    Screenfull.onchange(updateToolbar);
+    Screenfull.on('change', updateToolbar);
   }
 
   // Word count

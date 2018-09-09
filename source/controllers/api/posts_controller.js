@@ -691,7 +691,7 @@ module.exports = {
           // Use zen mode template
           previewRes.render('zen_mode', viewData, (err, html) => {
             res.set('Content-Type', 'text/html');
-            res.end(html);
+            res.send(html);
           });
         } else {
           // Use post template
