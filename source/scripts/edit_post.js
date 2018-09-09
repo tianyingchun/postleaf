@@ -27,9 +27,9 @@ $(() => {
   //
   function handleDoubleClick(event) {
     // Show appropriate panels on double-click
-    if($(event.target).is('a[href]')) $('#link-panel').panel('show');
-    if($(event.target).is('figure.image, img')) $('#image-panel').panel('show');
-    if($(event.target).is('[data-embed]')) $('#embed-panel').panel('show');
+    if ($(event.target).is('a[href]')) $('#link-panel').panel('show');
+    if ($(event.target).is('figure.image, img')) $('#image-panel').panel('show');
+    if ($(event.target).is('[data-embed]')) $('#embed-panel').panel('show');
   }
 
   //
@@ -53,11 +53,11 @@ $(() => {
   //
   function handleDragOver(event) {
     // Don't show the dropzone if the file manager is activated
-    if($('#file-manager').is(':visible')) return;
+    if ($('#file-manager').is(':visible')) return;
 
     event.preventDefault();
 
-    if(isDraggingFile(event)) {
+    if (isDraggingFile(event)) {
       showDropzone(event.target);
     }
   }
@@ -76,10 +76,10 @@ $(() => {
     hideDropzone();
 
     // Don't do anything if the file was dropped outside of a target
-    if(!target) return;
+    if (!target) return;
 
     // Upload the dropped file
-    if(isDraggingFile(event)) {
+    if (isDraggingFile(event)) {
       upload({
         file: event.originalEvent.dataTransfer.files[0],
         action: uploadAction,
@@ -87,8 +87,8 @@ $(() => {
       })
         .then((res) => {
           // Insert an image
-          if(res.upload && res.upload.filename.match(/\.(gif|jpg|jpeg|png|svg)$/i)) {
-            if(target === 'post:image') {
+          if (res.upload && res.upload.filename.match(/\.(gif|jpg|jpeg|png|svg)$/i)) {
+            if (target === 'post:image') {
               // Set post image
               $('#image').val(res.upload.path).trigger('change');
 
@@ -103,7 +103,7 @@ $(() => {
           }
 
           // Insert a link
-          if(res.upload && target === 'post:content') {
+          if (res.upload && target === 'post:content') {
             contentEditor.insertContent(
               $('<a>')
                 .attr('href', res.upload.path)
@@ -116,7 +116,7 @@ $(() => {
         })
         .catch((res) => {
           // Show error message
-          if(res.message) {
+          if (res.message) {
             $.announce.warning(res.message);
           }
         });
@@ -136,25 +136,25 @@ $(() => {
     let cmd = isMac ? event.metaKey : event.ctrlKey;
 
     // Link (CMD + K)
-    if(cmd && event.keyCode === 75) {
+    if (cmd && event.keyCode === 75) {
       event.preventDefault();
       $('#link-panel').panel('show');
     }
 
     // Image (CMD + SHIFT + I)
-    if(cmd && event.shiftKey && event.keyCode === 73) {
+    if (cmd && event.shiftKey && event.keyCode === 73) {
       event.preventDefault();
       $('#image-panel').panel('show');
     }
 
     // Embed (CMD + SHIFT + E)
-    if(cmd && event.shiftKey && event.keyCode === 69) {
+    if (cmd && event.shiftKey && event.keyCode === 69) {
       event.preventDefault();
       $('#embed-panel').panel('show');
     }
 
     // New section (CMD + ENTER)
-    if(cmd && event.keyCode === 13) {
+    if (cmd && event.keyCode === 13) {
       this.insertContent('<hr/>');
     }
 
@@ -184,7 +184,7 @@ $(() => {
     let pastedData = event.content;
 
     // Check for anything that looks like a URL
-    if(pastedData.match(/^https?:\/\//i)) {
+    if (pastedData.match(/^https?:\/\//i)) {
       event.stopPropagation();
       event.preventDefault();
 
@@ -215,7 +215,7 @@ $(() => {
   //
   function insertContentFromUrl(url) {
     // Check for images and insert them directly into the editor
-    if(url.match(/^https?:\/\/(.*?)\.(gif|jpg|jpeg|png|svg)$/i)) {
+    if (url.match(/^https?:\/\/(.*?)\.(gif|jpg|jpeg|png|svg)$/i)) {
       return contentEditor.insertImage(url);
     }
 
@@ -228,16 +228,16 @@ $(() => {
         url: url
       }
     })
-    .done((res) => {
-      if(res.embed && res.embed.html) {
-        // An embed provider was found, insert the HTML
-        return contentEditor.insertEmbed(res.embed.html, { provider: res.site_name });
-      } else if(res.preview) {
-        // No embed provider, insert a preview instead
-        return contentEditor.insertEmbed(res.preview);
-      }
-    })
-    .always(() => NProgress.done());
+      .done((res) => {
+        if (res.embed && res.embed.html) {
+          // An embed provider was found, insert the HTML
+          return contentEditor.insertEmbed(res.embed.html, { provider: res.site_name });
+        } else if (res.preview) {
+          // No embed provider, insert a preview instead
+          return contentEditor.insertEmbed(res.preview);
+        }
+      })
+      .always(() => NProgress.done());
   }
 
   //
@@ -255,8 +255,8 @@ $(() => {
   // Returns a boolean.
   //
   function isDraggingFile(event) {
-    if(event.originalEvent === undefined) return false;
-    if(event.originalEvent.dataTransfer === undefined) return false;
+    if (event.originalEvent === undefined) return false;
+    if (event.originalEvent.dataTransfer === undefined) return false;
     return $.inArray('Files', event.originalEvent.dataTransfer.types) > -1;
   }
 
@@ -273,13 +273,13 @@ $(() => {
     $('.main-container').removeClass('loading');
 
     // Check for missing helpers by scanning for their output
-    for(let helper of [
+    for (let helper of [
       { code: '{@head/}', selector: '[data-postleaf-editor="styles"]' },
       { code: '{@foot/}', selector: '[data-postleaf-editor="scripts"]' },
       { code: '{@title editable="true"/}', selector: '[data-postleaf-region="title"]' },
       { code: '{@content editable="true/}', selector: '[data-postleaf-region="content"]' }
     ]) {
-      if(!$(helper.selector, frameDoc).length) {
+      if (!$(helper.selector, frameDoc).length) {
         $('#missing-helper')
           .find('code').text(helper.code).end()
           .prop('hidden', false);
@@ -292,9 +292,9 @@ $(() => {
 
     $(frameDoc)
       // Prevent links from loading other pages
-      .on('click mousedown', 'a, area', function(event) {
+      .on('click mousedown', 'a, area', function (event) {
         // Skip [data-postleaf] elements
-        if(!$(this).parents().addBack().is('[data-postleaf-region]')) {
+        if (!$(this).parents().addBack().is('[data-postleaf-region]')) {
           event.preventDefault();
         }
       })
@@ -355,21 +355,24 @@ $(() => {
 
       // Fade the frame out while we switch templates. This provides a smooth transition as styles
       // and other resources are loaded.
-      $('#editor-frame').animateCSS('fadeOut', 100, function() {
-        $(this).css('opacity', 0);
 
-        // Render the updated preview
-        renderPreview(postData).then(() => {
-          // Hide the loader
-          $('.main-container').removeClass('loading');
-
-          // Fade the frame back in once the preview has loaded
-          $('#editor-frame').animateCSS('fadeIn', 100, function() {
-            $(this).css('opacity', 1);
-
-            resolve();
+      $('#editor-frame').fadeOut({
+        duration: 100, complete: function () {
+          $(this).css('opacity', 0);
+          // Render the updated preview
+          renderPreview(postData).then(() => {
+            // Hide the loader
+            $('.main-container').removeClass('loading');
+            // Fade the frame back in once the preview has loaded
+            $('#editor-frame').fadeIn({
+              duration: 100,
+              complete: function () {
+                $(this).css('opacity', 1);
+                resolve();
+              }
+            });
           });
-        });
+        }
       });
     });
   }
@@ -418,7 +421,7 @@ $(() => {
         .hide()
         .attr('name', 'dummy_frame')
         .appendTo('body')
-        .one('load', function() {
+        .one('load', function () {
           // Replace HTML classes
           $('html', frameDoc).attr('class', this.contentWindow.document.documentElement.className);
 
@@ -470,7 +473,7 @@ $(() => {
         // Reset dirty state
         makeClean();
 
-        if(res.post) {
+        if (res.post) {
           // Show a success message
           let message = postId ? changesSaved : postCreated.replace(':name', res.post.title);
           $.announce.success(message);
@@ -489,14 +492,14 @@ $(() => {
         let res = jqXHR.responseJSON;
 
         // Show error states
-        if(res.invalid) {
-          for(let i in res.invalid) {
+        if (res.invalid) {
+          for (let i in res.invalid) {
             $(':input[name="' + res.invalid[i] + '"]').closest('.form-group').addClass('has-warning');
           }
         }
 
         // Show error message
-        if(res.message) {
+        if (res.message) {
           $.announce.warning(res.message);
         }
       })
@@ -551,7 +554,7 @@ $(() => {
   // Toggles fullscreen mode on and off.
   //
   function toggleFullscreen() {
-    if(Screenfull.enabled) {
+    if (Screenfull.enabled) {
       Screenfull.toggle();
     }
   }
@@ -579,7 +582,7 @@ $(() => {
     // Show/hide theme toggle
     $('#zen-mode-theme').prop('hidden', !zenMode);
 
-    if(contentEditor && contentEditor.isReady) {
+    if (contentEditor && contentEditor.isReady) {
       loadPreview(serializePost());
       updateToolbar();
     }
@@ -611,7 +614,7 @@ $(() => {
       $('#no-revisions').prop('hidden', hasRevisions);
 
       // Reload the table (only if we're editing an existing post)
-      if(postId && reload) {
+      if (postId && reload) {
         $.ajax({
           url: revisionTableAction,
           type: 'GET',
@@ -622,7 +625,7 @@ $(() => {
         })
           .done((res) => {
             // Update the HTML
-            if(res.html) {
+            if (res.html) {
               $('#revisions').html(res.html);
             }
 
@@ -641,7 +644,7 @@ $(() => {
   function updateToolbar() {
     // View options
     $('[data-zen-mode]').toggleClass('enabled', zenMode);
-    if(Screenfull.enabled) {
+    if (Screenfull.enabled) {
       $('[data-fullscreen]').toggleClass('enabled', Screenfull.isFullscreen);
     }
     $('[data-word-count]').toggleClass('enabled', wordCount);
@@ -651,7 +654,7 @@ $(() => {
     $('[data-editor="command:redo"]').prop('disabled', !contentEditor.hasRedo());
 
     // Formats
-    $('[data-editor^="format:"]').each(function() {
+    $('[data-editor^="format:"]').each(function () {
       let format = $(this).attr('data-editor').split(':')[1];
       $(this).toggleClass('enabled', contentEditor.hasFormat(format));
     });
@@ -666,7 +669,7 @@ $(() => {
     $('[data-editor="panel:embed"]').toggleClass('enabled', contentEditor.isEmbed());
 
     // Highlight dropdown buttons if at least one menu item is enabled
-    $('.dropdown-menu').each(function() {
+    $('.dropdown-menu').each(function () {
       let menu = this;
       let button = $(menu).closest('.dropdown').find('[data-toggle="dropdown"]');
 
@@ -703,8 +706,8 @@ $(() => {
       let formData = new FormData();
 
       // Append custom data
-      if(typeof options.data === 'object') {
-        for(let key in options.data) {
+      if (typeof options.data === 'object') {
+        for (let key in options.data) {
           formData.append(key, options.data[key]);
         }
       }
@@ -721,8 +724,8 @@ $(() => {
         contentType: false,
         processData: false,
         cache: false,
-        progress: function(event) {
-          if(event.lengthComputable) {
+        progress: function (event) {
+          if (event.lengthComputable) {
             NProgress.set(event.loaded / event.total);
           }
         }
@@ -767,7 +770,7 @@ $(() => {
     // correct content region.
     .on('shown.bs.dropdown', () => contentEditor.focus())
     // Keep dropdowns inside the viewport
-    .on('shown.bs.dropdown', function() {
+    .on('shown.bs.dropdown', function () {
       let dropdown = $(this).find('.dropdown-menu');
 
       $(dropdown)
@@ -794,7 +797,7 @@ $(() => {
     .on('click', toggleFullscreen);
 
   // Listen for fullscreen changes
-  if(Screenfull.enabled) {
+  if (Screenfull.enabled) {
     Screenfull.on('change', updateToolbar);
   }
 
@@ -803,37 +806,37 @@ $(() => {
 
   // Zen mode
   $('[data-zen-mode]').on('click', () => toggleZenMode(!zenMode));
-  $('[data-zen-theme]').on('click', function() {
+  $('[data-zen-theme]').on('click', function () {
     let currentTheme = $(this).attr('data-zen-theme');
     toggleZenTheme(currentTheme === 'night' ? 'day' : 'night');
   });
 
   // Set initial zen mode state
-  if(Cookie.get('zenMode') === 'true') toggleZenMode(true);
+  if (Cookie.get('zenMode') === 'true') toggleZenMode(true);
 
   // Enforce slug syntax
-  $('#slug').on('change', function() {
+  $('#slug').on('change', function () {
     this.value = Postleaf.Slug(this.value);
   });
 
   // Re-render the post when settings are changed
   $('#settings-panel')
-    .on('show.panel', function() {
+    .on('show.panel', function () {
       // Remember settings clean state
       $(this).data('cleanState', JSON.stringify(serializePost()));
     })
-    .on('hide.panel', function(event) {
+    .on('hide.panel', function (event) {
       let postData = serializePost();
       let cleanState = $(this).data('cleanState');
 
       // Don't hide the panel if the file manager is showing
-      if($('#file-manager').is(':visible')) {
+      if ($('#file-manager').is(':visible')) {
         event.preventDefault();
         return;
       }
 
       // If the clean state has changed, we need to render a new preview
-      if(JSON.stringify(postData) !== cleanState) {
+      if (JSON.stringify(postData) !== cleanState) {
         loadPreview(postData);
       }
     });
@@ -855,64 +858,65 @@ $(() => {
     minLength: 1,
     highlight: false
   }, {
-    name: 'linkSuggestions',
-    limit: 5,
-    display: 'url',
-    templates: {
-      // Templates for displaying results
-      suggestion: function(item) {
-        switch(item.type) {
-        case 'post':
-          return '<div><i class="fa fa-file-text"></i> ' + item.label + '</div>';
-        case 'tag':
-          return '<div><i class="fa fa-tag"></i> ' + item.label + '</div>';
-        case 'user':
-          return '<div><i class="fa fa-user"></i> ' + item.label + '</div>';
-        default:
-          return '<div>' + item.label + '</div>';
-        }
-      }
-    },
-    source: function(items) {
-      // Simple search using string matching
-      return function findMatches(query, callback) {
-        let matches = [];
-        let regex = new RegExp(query, 'i');
-
-        $.each(items, (key, item) => {
-          if(regex.test(item.searchText)) {
-            matches.push(item);
+      name: 'linkSuggestions',
+      limit: 5,
+      display: 'url',
+      templates: {
+        // Templates for displaying results
+        suggestion: function (item) {
+          switch (item.type) {
+            case 'post':
+              return '<div><i class="fa fa-file-text"></i> ' + item.label + '</div>';
+            case 'tag':
+              return '<div><i class="fa fa-tag"></i> ' + item.label + '</div>';
+            case 'user':
+              return '<div><i class="fa fa-user"></i> ' + item.label + '</div>';
+            default:
+              return '<div>' + item.label + '</div>';
           }
-        });
+        }
+      },
+      source: function (items) {
+        // Simple search using string matching
+        return function findMatches(query, callback) {
+          let matches = [];
+          let regex = new RegExp(query, 'i');
 
-        callback(matches);
-      };
-    }(linkSuggestions)
-  });
+          $.each(items, (key, item) => {
+            if (regex.test(item.searchText)) {
+              matches.push(item);
+            }
+          });
+
+          callback(matches);
+        };
+      }(linkSuggestions)
+    });
 
   // Open revisions
-  $(document).on('click', '[data-open-revision]', function() {
+  $(document).on('click', '[data-open-revision]', function () {
     let url = $(this).attr('data-open-revision');
 
     window.open(url);
   });
 
   // Edit revisions
-  $(document).on('click', '[data-edit-revision]', function() {
+  $(document).on('click', '[data-edit-revision]', function () {
     let url = $(this).attr('data-edit-revision');
 
     // Fade the editor out while the revision loads
     $('.main-container').addClass('loading');
-    $('#editor-frame').animateCSS('fadeOut', 100, function() {
-      $(this).css('opacity', 0);
 
-      // Fetch the revision
-      $.ajax({
-        url: url,
-        type: 'GET'
-      })
-        .done((res) => {
-          if(res.revision) {
+    $('#editor-frame').fadeOut({
+      duration: 100,
+      complete: function () {
+        $(this).css('opacity', 0);
+        // Fetch the revision
+        $.ajax({
+          url: url,
+          type: 'GET'
+        }).done((res) => {
+          if (res.revision) {
             // Restore the content
             titleEditor.setContent(res.revision.title);
             contentEditor.setContent(res.revision.content);
@@ -921,19 +925,22 @@ $(() => {
             makeClean();
             contentEditor.resetUndo();
           }
-        })
-        .always(() => {
+        }).always(() => {
           // Fade the frame back in
           $('.main-container').removeClass('loading');
-          $('#editor-frame').animateCSS('fadeIn', 100, function() {
-            $(this).css('opacity', 1);
+          $('#editor-frame').fadeIn({
+            duration: 100,
+            complete: function () {
+              $(this).css('opacity', 1);
+            }
           });
         });
+      }
     });
   });
 
   // Delete revisions
-  $(document).on('click', '[data-delete-revision]', function() {
+  $(document).on('click', '[data-delete-revision]', function () {
     let tr = (this).closest('tr');
     let confirm = $(this).attr('data-confirm');
     let url = $(this).attr('data-delete-revision');
@@ -946,15 +953,16 @@ $(() => {
       $.ajax({
         url: url,
         type: 'DELETE'
-      })
-      .done(() => {
+      }).done(() => {
         // Remove it
-        $(tr).animateCSS('fadeOut', 300, function() {
-          $(this).remove();
-          updateRevisionsTable(false);
+        $(tr).fadeOut({
+          duration: 300,
+          complete: function () {
+            $(this).remove();
+            updateRevisionsTable(false);
+          }
         });
-      })
-      .always(() => NProgress.done());
+      }).always(() => NProgress.done());
     });
   });
 
@@ -962,27 +970,27 @@ $(() => {
   // Editor commands
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  $(document).on('click', '[data-editor]', function() {
+  $(document).on('click', '[data-editor]', function () {
     let split = $(this).attr('data-editor').split(':');
     let type = split[0];
     let name = split[1];
 
-    switch(type) {
-    // Insert arbitrary content
-    case 'insert':
-      contentEditor.insertContent($(this).attr('data-content'));
-      break;
+    switch (type) {
+      // Insert arbitrary content
+      case 'insert':
+        contentEditor.insertContent($(this).attr('data-content'));
+        break;
 
-    // Toggle a format
-    case 'format':
-      contentEditor.toggleFormat(name);
-      break;
+      // Toggle a format
+      case 'format':
+        contentEditor.toggleFormat(name);
+        break;
 
-    // Execute a command
-    case 'command':
-      if(typeof contentEditor[name] === 'function') {
-        contentEditor[name]();
-      }
+      // Execute a command
+      case 'command':
+        if (typeof contentEditor[name] === 'function') {
+          contentEditor[name]();
+        }
     }
   });
 
@@ -995,31 +1003,31 @@ $(() => {
     let cmd = isMac ? event.metaKey : event.ctrlKey;
 
     // Fullscreen (alt + shift + f)
-    if(event.altKey && event.shiftKey && event.keyCode === 70) {
+    if (event.altKey && event.shiftKey && event.keyCode === 70) {
       event.preventDefault();
       toggleFullscreen();
     }
 
     // Zen mode (alt + shift + z)
-    if(event.altKey && event.shiftKey && event.keyCode === 90) {
+    if (event.altKey && event.shiftKey && event.keyCode === 90) {
       event.preventDefault();
       toggleZenMode(!zenMode);
     }
 
     // Word Count (alt + shift + w)
-    if(event.altKey && event.shiftKey && event.keyCode === 87) {
+    if (event.altKey && event.shiftKey && event.keyCode === 87) {
       event.preventDefault();
       toggleWordCount();
     }
 
     // Settings (cmd + ,)
-    if(cmd && event.keyCode === 188) {
+    if (cmd && event.keyCode === 188) {
       event.preventDefault();
       $('#settings-panel').panel('show');
     }
 
     // Save (cmd + s)
-    if(cmd && event.keyCode === 83) {
+    if (cmd && event.keyCode === 83) {
       event.preventDefault();
       save();
     }
@@ -1030,7 +1038,7 @@ $(() => {
 
   // Watch for unsaved changes
   window.onbeforeunload = () => {
-    if(cleanState && isDirty()) {
+    if (cleanState && isDirty()) {
       return $('#editor-frame').attr('data-save-confirmation');
     }
   };
@@ -1085,7 +1093,7 @@ $(() => {
       .on('shown.panel', () => $('#link-href').focus())
       .on('hide.panel', (event) => {
         // Don't hide the panel if the file manager is showing
-        if($('#file-manager').is(':visible')) {
+        if ($('#file-manager').is(':visible')) {
           event.preventDefault();
           return;
         }
@@ -1104,7 +1112,7 @@ $(() => {
       contentEditor.setLocation(location);
 
       // Insert a link
-      if(href.length) {
+      if (href.length) {
         contentEditor.insertLink(href, {
           title: title
         });
@@ -1128,9 +1136,9 @@ $(() => {
     });
 
     // Upload a file
-    $('#link-panel').on('change', ':file', function(event) {
+    $('#link-panel').on('change', ':file', function (event) {
       let input = this;
-      if(!event.target.files.length) return;
+      if (!event.target.files.length) return;
 
       upload({
         file: event.target.files[0],
@@ -1142,13 +1150,13 @@ $(() => {
           $(input).val('');
 
           // Set the URL to the new file
-          if(res.upload) {
+          if (res.upload) {
             $('#link-href').typeahead('val', res.upload.path);
           }
         })
         .catch((res) => {
           // Show error message
-          if(res.message) {
+          if (res.message) {
             $.announce.warning(res.message);
           }
         });
@@ -1159,7 +1167,7 @@ $(() => {
   // Image panel
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  (function() {
+  (function () {
     let location;
     let figure;
     let image;
@@ -1189,16 +1197,16 @@ $(() => {
 
         // Set alignment
         $('#image-align-none').trigger('click');
-        if(image) {
-          if(contentEditor.isAlignLeft()) $('#image-align-left').trigger('click');
-          if(contentEditor.isAlignCenter()) $('#image-align-center').trigger('click');
-          if(contentEditor.isAlignRight()) $('#image-align-right').trigger('click');
+        if (image) {
+          if (contentEditor.isAlignLeft()) $('#image-align-left').trigger('click');
+          if (contentEditor.isAlignCenter()) $('#image-align-center').trigger('click');
+          if (contentEditor.isAlignRight()) $('#image-align-right').trigger('click');
         }
       })
       .on('shown.panel', () => $('#image-src').focus())
       .on('hide.panel', (event) => {
         // Don't hide the panel if the file manager is showing
-        if($('#file-manager').is(':visible')) {
+        if ($('#file-manager').is(':visible')) {
           event.preventDefault();
           return;
         }
@@ -1219,7 +1227,7 @@ $(() => {
       contentEditor.setLocation(location);
 
       // Insert an image
-      if(src.length) {
+      if (src.length) {
         contentEditor.insertImage(src, {
           src: src,
           alt: alt,
@@ -1247,9 +1255,9 @@ $(() => {
     });
 
     // Upload an image
-    $('#image-panel').on('change', ':file', function(event) {
+    $('#image-panel').on('change', ':file', function (event) {
       let input = this;
-      if(!event.target.files.length) return;
+      if (!event.target.files.length) return;
 
       upload({
         file: event.target.files[0],
@@ -1261,12 +1269,12 @@ $(() => {
           $(input).val('');
 
           // Set the URL to the new image
-          if(res.upload) {
+          if (res.upload) {
             $('#image-src').val(res.upload.path).trigger('change');
           }
         }).catch((res) => {
           // Show error message
-          if(res.message) {
+          if (res.message) {
             $.announce.warning(res.message);
           }
         });
@@ -1277,7 +1285,7 @@ $(() => {
   // Embed panel
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  (function() {
+  (function () {
     let location;
     let embed;
 
@@ -1310,9 +1318,9 @@ $(() => {
       contentEditor.setLocation(location);
 
       // Insert an embed
-      if(code.length) {
+      if (code.length) {
         // Check for anything that looks like a URL
-        if(code.match(/^https?:\/\//i)) {
+        if (code.match(/^https?:\/\//i)) {
           // Generate embed code from URL
           insertContentFromUrl(code);
         } else {
@@ -1335,7 +1343,7 @@ $(() => {
   // iOS Admin Toolbar Fix
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  (function() {
+  (function () {
     function positionToolbar() {
       // Move the frame down so the toolbar doesn't block content at the top
       $('#editor-frame').css('marginTop', $('.admin-toolbar').outerHeight());
@@ -1346,7 +1354,7 @@ $(() => {
 
     let iosToolbarTimeout;
 
-    if($('html').is('.ios')) {
+    if ($('html').is('.ios')) {
       // Use absolute positioning
       $('.admin-toolbar')
         .css({

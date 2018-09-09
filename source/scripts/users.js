@@ -13,7 +13,7 @@ $(() => {
     .selectable({
       items: '.card',
       multiple: true,
-      change: function(values) {
+      change: function (values) {
         let elements = $(this).selectable('getElements');
 
         // Toggle toolbar buttons when selection changes
@@ -27,7 +27,7 @@ $(() => {
       doubleClick: (value, el) => {
         let url = $(el).attr('data-edit-action');
 
-        if(url) {
+        if (url) {
           location.href = url;
         }
       }
@@ -37,7 +37,7 @@ $(() => {
 
   // Remove selection when clicking outside of a user
   $('main').on('click', (event) => {
-    if(!$(event.target).parents().addBack().is('.card')) {
+    if (!$(event.target).parents().addBack().is('.card')) {
       $('#users').selectable('selectNone');
     }
   });
@@ -46,16 +46,16 @@ $(() => {
   let lastSearch = '';
   let searchTimeout;
   let searchRequest;
-  $('[data-search]').on('change keyup paste', function() {
+  $('[data-search]').on('change keyup paste', function () {
     let search = this.value;
     let selection = $('#users').selectable('value');
 
     clearTimeout(searchTimeout);
-    if(search === lastSearch) return;
+    if (search === lastSearch) return;
 
     searchTimeout = setTimeout(() => {
       // Run the search
-      if(searchRequest) searchRequest.abort();
+      if (searchRequest) searchRequest.abort();
       searchRequest = $.ajax({
         url: searchAction,
         type: 'GET',
@@ -64,17 +64,17 @@ $(() => {
           render: 'userCards'
         }
       })
-      .done((res) => {
-        searchRequest = null;
-        lastSearch = search;
+        .done((res) => {
+          searchRequest = null;
+          lastSearch = search;
 
-        // Update the user list
-        if(res.html) {
-          $('#users')
-            .html(res.html)
-            .selectable('value', selection);
-        }
-      });
+          // Update the user list
+          if (res.html) {
+            $('#users')
+              .html(res.html)
+              .selectable('value', selection);
+          }
+        });
     }, 300);
   });
 
@@ -82,7 +82,7 @@ $(() => {
   $('[data-open]').on('click', () => {
     let url = $('#users').selectable('getElements', true)[0].getAttribute('data-open-action');
 
-    if(url) {
+    if (url) {
       location.href = url;
     }
   });
@@ -91,13 +91,13 @@ $(() => {
   $('[data-edit]').on('click', () => {
     let url = $('#users').selectable('getElements', true)[0].getAttribute('data-edit-action');
 
-    if(url) {
+    if (url) {
       location.href = url;
     }
   });
 
   // Delete
-  $('[data-delete]').on('click', function() {
+  $('[data-delete]').on('click', function () {
     let selectedUsers = $('#users').selectable('getElements', true);
     let confirm = $(this).attr('data-confirm');
     let numUsers = selectedUsers.length;
@@ -116,21 +116,19 @@ $(() => {
         $.ajax({
           url: url,
           type: 'DELETE'
-        })
-        .done(() => {
+        }).done(() => {
           let user = $('#users').selectable('getElements', id);
 
           // Remove the user from the list
-          $(user)
-            .parent()
-            .animateCSS('fadeOut', 300, function() {
+          $(user).parent().fadeOut({
+            duration: 300,
+            complete: function () {
               $(this).remove();
-
               // Update the selectable control
               $('#users').selectable('change');
-            });
-        })
-        .always(() => NProgress.set(++numDeleted / numUsers));
+            }
+          });
+        }).always(() => NProgress.set(++numDeleted / numUsers));
       });
     });
   });

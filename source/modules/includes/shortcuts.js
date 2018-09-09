@@ -12,28 +12,33 @@ $(() => {
 
     // Hide it
     $('html').removeClass('has-modal');
-    $('#shortcuts, #shortcuts-overlay').animateCSS('fadeOut', 100, function() {
-      $(this).prop('hidden', true);
+    $('#shortcuts, #shortcuts-overlay').fadeOut({
+      duration: 100,
+      complete: function () {
+        $(this).prop('hidden', true);
+      }
     });
   }
 
   // Shows the shortcuts screen
   function show() {
     // Don't show if there's another modal showing
-    if($('html').hasClass('has-modal')) return false;
+    if ($('html').hasClass('has-modal')) return false;
 
     // Show it
     $('html').addClass('has-modal');
     $('#shortcuts, #shortcuts-overlay')
       .prop('hidden', false)
-      .css('opacity', 0)
-      .animateCSS('fadeIn', 100, function() {
-        $(this).css('opacity', 1);
+      .css('opacity', 0).fadeIn({
+        duration: 100,
+        complete: function () {
+          $(this).css('opacity', 1);
+        }
       });
 
     // Escape or enter closes it
     $(document).on('keydown.shortcuts', (event) => {
-      if(event.keyCode === 27 || event.keyCode === 13) {
+      if (event.keyCode === 27 || event.keyCode === 13) {
         event.preventDefault();
         hide();
       }
@@ -43,7 +48,7 @@ $(() => {
     // allow the window scroll when it's too tall, to we actually have to check for clicks on
     // #shortcuts (but not #shortcuts-body).
     $('#shortcuts').on('click.shortcuts', (event) => {
-      if(!$(event.target).parents().addBack().is('#shortcuts-body')) {
+      if (!$(event.target).parents().addBack().is('#shortcuts-body')) {
         hide();
       }
     });
@@ -52,11 +57,11 @@ $(() => {
   $(document)
     // Show with f1
     .on('keydown', (event) => {
-      if(event.keyCode === 112) {
+      if (event.keyCode === 112) {
         event.preventDefault();
 
         // Only show if shortcuts are available
-        if(isAvailable) {
+        if (isAvailable) {
           show();
         }
       }

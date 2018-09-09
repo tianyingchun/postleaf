@@ -13,7 +13,7 @@ $(() => {
     .selectable({
       items: '.card',
       multiple: true,
-      change: function(values) {
+      change: function (values) {
         let elements = $(this).selectable('getElements');
 
         // Toggle toolbar buttons when selection changes
@@ -27,7 +27,7 @@ $(() => {
       doubleClick: (value, el) => {
         let url = $(el).attr('data-edit-action');
 
-        if(url) {
+        if (url) {
           location.href = $(el).attr('data-edit-action');
         }
       }
@@ -37,7 +37,7 @@ $(() => {
 
   // Remove selection when clicking outside of a tag
   $('main').on('click', (event) => {
-    if(!$(event.target).parents().addBack().is('.card')) {
+    if (!$(event.target).parents().addBack().is('.card')) {
       $('#tags').selectable('selectNone');
     }
   });
@@ -46,16 +46,16 @@ $(() => {
   let lastSearch = '';
   let searchTimeout;
   let searchRequest;
-  $('[data-search]').on('change keyup paste', function() {
+  $('[data-search]').on('change keyup paste', function () {
     let search = this.value;
     let selection = $('#tags').selectable('value');
 
     clearTimeout(searchTimeout);
-    if(search === lastSearch) return;
+    if (search === lastSearch) return;
 
     searchTimeout = setTimeout(() => {
       // Run the search
-      if(searchRequest) searchRequest.abort();
+      if (searchRequest) searchRequest.abort();
       searchRequest = $.ajax({
         url: searchAction,
         type: 'GET',
@@ -64,17 +64,17 @@ $(() => {
           render: 'tagCards'
         }
       })
-      .done((res) => {
-        searchRequest = null;
-        lastSearch = search;
+        .done((res) => {
+          searchRequest = null;
+          lastSearch = search;
 
-        // Update the tag list
-        if(res.html) {
-          $('#tags')
-            .html(res.html)
-            .selectable('value', selection);
-        }
-      });
+          // Update the tag list
+          if (res.html) {
+            $('#tags')
+              .html(res.html)
+              .selectable('value', selection);
+          }
+        });
     }, 300);
   });
 
@@ -82,7 +82,7 @@ $(() => {
   $('[data-open]').on('click', () => {
     let url = $('#tags').selectable('getElements', true)[0].getAttribute('data-open-action');
 
-    if(url) {
+    if (url) {
       location.href = url;
     }
   });
@@ -91,13 +91,13 @@ $(() => {
   $('[data-edit]').on('click', () => {
     let url = $('#tags').selectable('getElements', true)[0].getAttribute('data-edit-action');
 
-    if(url) {
+    if (url) {
       location.href = url;
     }
   });
 
   // Delete
-  $('[data-delete]').on('click', function() {
+  $('[data-delete]').on('click', function () {
     let selectedTags = $('#tags').selectable('getElements', true);
     let confirm = $(this).attr('data-confirm');
     let numTags = selectedTags.length;
@@ -116,21 +116,18 @@ $(() => {
         $.ajax({
           url: url,
           type: 'DELETE'
-        })
-        .done(() => {
+        }).done(() => {
           let tag = $('#tags').selectable('getElements', id);
-
           // Remove the tag from the list
-          $(tag)
-            .parent()
-            .animateCSS('fadeOut', 300, function() {
+          $(tag).parent().fadeOut({
+            duration: 300,
+            complete: function () {
               $(this).remove();
-
               // Update the selectable control
               $('#tags').selectable('change');
-            });
-        })
-        .always(() => NProgress.set(++numDeleted / numTags));
+            }
+          });
+        }).always(() => NProgress.set(++numDeleted / numTags));
       });
     });
   });

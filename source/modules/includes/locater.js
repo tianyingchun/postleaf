@@ -17,10 +17,9 @@ $(() => {
 
     // Hide it
     $('html').removeClass('has-modal');
-    $('#locater, #locater-overlay').animateCSS('fadeOut',{
-      delay: 0,
+    $('#locater, #locater-overlay').fadeOut({
       duration: 100,
-      complete: function() {
+      complete: function () {
         $(this).prop('hidden', true);
       }
     });
@@ -35,8 +34,8 @@ $(() => {
     let selectedHeight = $(selected).outerHeight();
 
     // Is it partially hidden?
-    if(selectedTop < scrollTop || selectedTop + selectedHeight > scrollTop + height) {
-      if(direction === 'up') {
+    if (selectedTop < scrollTop || selectedTop + selectedHeight > scrollTop + height) {
+      if (direction === 'up') {
         $('#locater-results').scrollTop(selectedTop);
       } else {
         $('#locater-results').scrollTop(selectedTop - height + selectedHeight);
@@ -49,12 +48,12 @@ $(() => {
     let items = $('#locater-results a');
     let selected = $('#locater-results .active');
 
-    if($(selected).length) {
+    if ($(selected).length) {
       // Clear selection
       $(items).removeClass('active');
 
-      if(direction === 'up') {
-        if($(selected).prev('a').length) {
+      if (direction === 'up') {
+        if ($(selected).prev('a').length) {
           // Select adjacent item
           $(selected).prev('a').addClass('active');
         } else {
@@ -62,7 +61,7 @@ $(() => {
           $(items).last().addClass('active');
         }
       } else {
-        if($(selected).next('a').length) {
+        if ($(selected).next('a').length) {
           // Select adjacent item
           $(selected).next('a').addClass('active');
         } else {
@@ -86,7 +85,7 @@ $(() => {
   // Shows the locater control
   function show() {
     // Don't show if there's another modal showing
-    if($('html').hasClass('has-modal')) return false;
+    if ($('html').hasClass('has-modal')) return false;
 
     // Reset it
     reset();
@@ -95,11 +94,9 @@ $(() => {
     $('html').addClass('has-modal');
     $('#locater, #locater-overlay')
       .prop('hidden', false)
-      .css('opacity', 0)
-      .animateCSS('fadeIn',{
-        delay: 0,
+      .css('opacity', 0).fadeIn({
         duration: 100,
-        complete: function() {
+        complete: function () {
           $(this).css('opacity', 1);
           $('#locater-input').focus();
         }
@@ -108,17 +105,17 @@ $(() => {
     // Watch for key presses
     $(document).on('keydown.locater', (event) => {
       // Escape closes it
-      if(event.keyCode === 27) {
+      if (event.keyCode === 27) {
         event.preventDefault();
         hide();
       }
 
       // Enter selects it
-      if(event.keyCode === 13) {
+      if (event.keyCode === 13) {
         event.preventDefault();
 
         // Go to the selected item
-        if($('#locater-results .active').length) {
+        if ($('#locater-results .active').length) {
           location.href = $('#locater-results .active').attr('href');
         }
 
@@ -126,7 +123,7 @@ $(() => {
       }
 
       // Move up / down
-      if(event.keyCode === 38 || event.keyCode === 40) {
+      if (event.keyCode === 38 || event.keyCode === 40) {
         event.preventDefault();
         move(event.keyCode === 38 ? 'up' : 'down');
       }
@@ -136,21 +133,21 @@ $(() => {
     $('#locater-overlay').on('click.locater', hide);
 
     // Watch the search field for changes
-    $('#locater-input').on('keyup.locater', function() {
+    $('#locater-input').on('keyup.locater', function () {
       let query = $(this).val();
 
       // Debounce requests
       clearTimeout(searchTimeout);
-      if(request) request.abort();
+      if (request) request.abort();
 
       // Reset the UI when the search is cleared
-      if(query === '') {
+      if (query === '') {
         reset();
         return;
       }
 
       // Nothing to do if the query hasn't changed
-      if(query === lastQuery) {
+      if (query === lastQuery) {
         $('#locater').removeClass('loading');
         return;
       }
@@ -171,7 +168,7 @@ $(() => {
             lastQuery = query;
 
             // Show the results, or clear them if none were found
-            if(res.html && res.results.length) {
+            if (res.html && res.results.length) {
               $('#locater-results').html(res.html).prop('hidden', false);
               $('#locater-results a:first').addClass('active');
             } else {
@@ -186,11 +183,11 @@ $(() => {
   $(document)
     // Toggle with CMD|CTRL + SHIFT + F
     .on('keydown', (event) => {
-      if((event.metaKey || event.ctrlKey) && event.shiftKey && event.keyCode === 70) {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.keyCode === 70) {
         event.preventDefault();
 
         // Only show if the locater is available
-        if(isAvailable) {
+        if (isAvailable) {
           $('#locater').is(':visible') ? hide() : show();
         }
       }
@@ -200,7 +197,7 @@ $(() => {
       event.preventDefault();
 
       // Only show if the locater is available
-      if(isAvailable) {
+      if (isAvailable) {
         $('#locater').is(':visible') ? hide() : show();
       }
     });

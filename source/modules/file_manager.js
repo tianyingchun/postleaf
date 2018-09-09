@@ -34,7 +34,7 @@ function getFiles(page) {
     let offset = (page - 1) * count;
 
     // Fetch results
-    if(loadRequest) loadRequest.abort();
+    if (loadRequest) loadRequest.abort();
     loadRequest = $.ajax({
       url: loadAction,
       type: 'GET',
@@ -52,9 +52,9 @@ function getFiles(page) {
         moreFiles = res.totalItems > count * page;
 
         // Update the file list
-        if(res.html) {
+        if (res.html) {
           // Reset the list
-          if(page === 1) $('#file-manager-items').html('');
+          if (page === 1) $('#file-manager-items').html('');
 
           // Append files
           $('#file-manager-items').append(res.html);
@@ -63,7 +63,7 @@ function getFiles(page) {
         resolve(res);
       })
       .fail((jqXHR) => {
-        if(jqXHR.responseJSON) {
+        if (jqXHR.responseJSON) {
           reject(jqXHR.responseJSON);
         }
       })
@@ -73,10 +73,10 @@ function getFiles(page) {
 
 // Hides the file manager
 function hide() {
-  if(!isAvailable) return false;
+  if (!isAvailable) return false;
 
   // Don't dismiss if a confirmation modal is showing
-  if($('.alertable:visible').length) return false;
+  if ($('.alertable:visible').length) return false;
 
   // Remove bindings
   $(document).off('.file-manager');
@@ -84,9 +84,14 @@ function hide() {
   // Hide it
   $('html').removeClass('has-modal');
   $('#file-manager-overlay').prop('hidden', true);
-  $('#file-manager').animateCSS('slideOutDown', 300, function() {
-    $(this).prop('hidden', true);
-    reset();
+
+  $('#file-manager').animateCSS('slideOutDown', {
+    delay: 0,
+    duration: 300,
+    complete: function () {
+      $(this).prop('hidden', true);
+      reset();
+    }
   });
 }
 
@@ -123,16 +128,16 @@ function reset() {
 //
 function parseItemJson(items) {
   let result = [];
-  if(!Array.isArray(items)) items = [items];
+  if (!Array.isArray(items)) items = [items];
 
   // Loop through all selected items
-  if(items.length) {
+  if (items.length) {
     items.forEach((item) => {
       let json = $(item).attr('data-json');
 
       try {
         result.push(JSON.parse(json));
-      } catch(err) { /* skip */ }
+      } catch (err) { /* skip */ }
     });
   }
 
@@ -147,27 +152,27 @@ function parseItemJson(items) {
 // No return value.
 //
 function select(items) {
-  if(!enableSelect) return;
+  if (!enableSelect) return;
 
   hide();
 
   // Cast to array
-  if(!Array.isArray(items)) items = [items];
+  if (!Array.isArray(items)) items = [items];
 
   // If multi-select is disabled, only return one item
-  if(!multiSelect) items = items[0];
+  if (!multiSelect) items = items[0];
 
-  if(typeof onSelect === 'function') {
+  if (typeof onSelect === 'function') {
     onSelect(items);
   }
 }
 
 // Shows the file manager
 function show() {
-  if(!isAvailable) return false;
+  if (!isAvailable) return false;
 
   // Don't show if there's another modal showing
-  if($('html').hasClass('has-modal')) return false;
+  if ($('html').hasClass('has-modal')) return false;
 
   // Reset the control
   reset();
@@ -181,17 +186,20 @@ function show() {
   $('#file-manager-overlay').prop('hidden', false);
   $('#file-manager')
     .prop('hidden', false)
-    .animateCSS('slideInUp', 300, () => {
-      $('#file-manager-search').focus();
-
-      // Load initial items after the animation so images loading won't affect performance
-      getFiles(1).then(() => $('#file-manager-items').selectable('change'));
+    .animateCSS('slideInUp', {
+      delay: 0,
+      duration: 300,
+      complete: function () {
+        $('#file-manager-search').focus();
+        // Load initial items after the animation so images loading won't affect performance
+        getFiles(1).then(() => $('#file-manager-items').selectable('change'));
+      }
     });
 
   // Watch for key presses
   $(document).on('keydown.file-manager', (event) => {
     // Escape closes it
-    if(event.keyCode === 27) {
+    if (event.keyCode === 27) {
       event.preventDefault();
       hide();
     }
@@ -220,7 +228,7 @@ function upload(files) {
     let uploadQueue = [];
     let newUploads = [];
 
-    if(!files || !files.length) return;
+    if (!files || !files.length) return;
     event.preventDefault();
 
     // Reset the UI and add a loading state while the uploads process
@@ -229,7 +237,7 @@ function upload(files) {
     $('#file-manager').addClass('loading');
 
     // Build an upload queue
-    for(let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i++) {
       uploadQueue.push(
         new Promise((resolve, reject) => {
           let formData = new FormData();
@@ -286,7 +294,7 @@ $(() => {
     .selectable({
       items: '.file-manager-item',
       multiple: true,
-      change: function(values) {
+      change: function (values) {
         let elements = $('#file-manager-items').selectable('getElements');
         let selectedElements = $('#file-manager-items').selectable('getElements', true);
         let copyText = values.length === 1 ? $(selectedElements[0]).attr('data-copy-action') : '';
@@ -310,7 +318,7 @@ $(() => {
 
   // Remove selection when clicking outside of an item
   $('#file-manager-items').on('click', (event) => {
-    if(!$(event.target).parents().addBack().is('.file-manager-item')) {
+    if (!$(event.target).parents().addBack().is('.file-manager-item')) {
       $('#file-manager-items').selectable('selectNone');
     }
   });
@@ -331,7 +339,7 @@ $(() => {
           // Reload files
           getFiles(1);
 
-          if(err.message) {
+          if (err.message) {
             $.announce.warning(err.message);
           }
         });
@@ -341,13 +349,13 @@ $(() => {
   $('#file-manager-overlay').on('dragover drop', (event) => event.preventDefault());
 
   // Watch the search field for changes
-  $('#file-manager-search').on('keyup', function() {
+  $('#file-manager-search').on('keyup', function () {
     let search = $(this).val();
     let selection = $('#file-manager-items').selectable('value');
 
     // Debounce requests
     clearTimeout(searchTimeout);
-    if(search === lastSearch) return;
+    if (search === lastSearch) return;
     searchTimeout = setTimeout(() => {
       getFiles(1)
         .then(() => {
@@ -361,14 +369,14 @@ $(() => {
   });
 
   // Infinite scrolling
-  $('#file-manager-items').on('scroll', function() {
+  $('#file-manager-items').on('scroll', function () {
     let div = this;
     let scrollPos = $(div).scrollTop() + $(div).height();
     let scrollHeight = div.scrollHeight;
     let threshold = $(window).height() / 2;
 
     // Load the next page of files
-    if(moreFiles && !loadRequest && scrollPos >= scrollHeight - threshold) {
+    if (moreFiles && !loadRequest && scrollPos >= scrollHeight - threshold) {
       NProgress.start();
       getFiles(currentPage + 1)
         .then(() => NProgress.done())
@@ -377,7 +385,7 @@ $(() => {
   });
 
   // Upload
-  $('[data-file-manager-upload]').on('change', ':file', function(event) {
+  $('[data-file-manager-upload]').on('change', ':file', function (event) {
     let input = $(this);
 
     upload(event.target.files)
@@ -386,7 +394,7 @@ $(() => {
         $(input).val('');
       })
       .catch((err) => {
-        if(err.message) {
+        if (err.message) {
           $.announce.warning(err.message);
         }
       });
@@ -400,7 +408,7 @@ $(() => {
   });
 
   // Copy
-  if(Clipboard.isSupported()) {
+  if (Clipboard.isSupported()) {
     let button = $('[data-file-manager-copy]');
     let copied = $(button).attr('data-copied');
     let clipboard = new Clipboard('[data-file-manager-copy]');
@@ -412,7 +420,7 @@ $(() => {
   }
 
   // Delete
-  $('[data-file-manager-delete]').on('click', function() {
+  $('[data-file-manager-delete]').on('click', function () {
     let selectedItems = $('#file-manager-items').selectable('getElements', true);
     let confirm = $(this).attr('data-confirm');
     let numItems = selectedItems.length;
@@ -432,20 +440,19 @@ $(() => {
         $.ajax({
           url: url,
           type: 'DELETE'
-        })
-        .done(() => {
+        }).done(() => {
           let item = $('#file-manager-items').selectable('getElements', id);
 
           // Remove the item from the list
-          $(item)
-            .animateCSS('fadeOut', 300, function() {
+          $(item).fadeOut({
+            duration: 300,
+            complete: function () {
               $(this).remove();
-
               // Update the selectable control
               $('#file-manager-items').selectable('change');
-            });
-        })
-        .always(() => NProgress.set(++numDeleted / numItems));
+            }
+          });
+        }).always(() => NProgress.set(++numDeleted / numItems));
       });
     });
   });
@@ -460,7 +467,7 @@ $(() => {
   $(document)
     // Toggle with CMD|CTRL + SHIFT + U
     .on('keydown', (event) => {
-      if((event.metaKey || event.ctrlKey) && event.shiftKey && event.keyCode === 85) {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.keyCode === 85) {
         event.preventDefault();
         self.show();
       }
@@ -513,7 +520,7 @@ const self = {
     onSelect = options.onSelect;
 
     // Convert mime types array to a CSV string
-    if(mimeTypes && mimeTypes.length) {
+    if (mimeTypes && mimeTypes.length) {
       mimeTypes = mimeTypes.join(',');
     }
 
